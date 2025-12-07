@@ -10,6 +10,8 @@ public class ProductosPanel extends javax.swing.JPanel {
     private ProductoTableModel modelo;
     private ProductoService productoService;
     private Producto productoSeleccionado; 
+    private ProductoController controller;
+    
 
 
     /**
@@ -17,7 +19,7 @@ public class ProductosPanel extends javax.swing.JPanel {
      */
     public ProductosPanel() {
         
-        this.productoService = new ProductoServiceStub();
+        this.controller = ApplicationContext.getInstance().getProductoController();
         
         initComponents();
         modelo = new ProductoTableModel(productos);
@@ -26,10 +28,11 @@ public class ProductosPanel extends javax.swing.JPanel {
         limpiarFormulario();
     }
 
+
     private void cargarProductos() {
-        this.productos = productoService.listarTodos();  
-        modelo.setProductos(this.productos); 
-}
+        List<Producto> productos = controller.listarTodos();
+        tableModel.setProductos(productos);
+    }
 
 
     /**
@@ -253,31 +256,24 @@ public class ProductosPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_tablaProductosMouseClicked
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (!validarFormulario()) return;
-
-        String nombre = txtNombre.getText().trim();
-        String categoria = (String) cmbCategoria.getSelectedItem();
-        String tipo = (String) cmbTipo.getSelectedItem();
-        double precio = Double.parseDouble(txtPrecio.getText());
-        boolean activo = chkActivo.isSelected();
-
-        if (productoSeleccionado == null) {
-            Producto nuevo = new Producto(0, nombre, categoria, tipo, precio, activo);
-            productoService.guardar(nuevo);
-            JOptionPane.showMessageDialog(this, "Producto guardado exitosamente");
-        } else {
-            productoSeleccionado.setNombre(nombre);
-            productoSeleccionado.setCategoria(categoria);
-            productoSeleccionado.setTipo(tipo);
-            productoSeleccionado.setPrecio(precio);
-            productoSeleccionado.setActivo(activo);
-
-            productoService.actualizar(productoSeleccionado);
-            JOptionPane.showMessageDialog(this, "Producto actualizado exitosamente");
+        try {
+            String nombre = txtNombre.getText();
+            String categoria = (String) cmbCategoria.getSelectedItem();
+            String tipo = (String) cmbTipo.getSelectedItem();
+            double precio = Double.parseDouble(txtPrecio.getText());
+            if (productoSeleccionado == null) {
+                controller.crear(nombre, categoria, tipo, precio);
+            } else {
+                controller.actualizar(productoSeleccionado.getId(), nombre,
+                                    categoria, tipo, precio, chkActivo.isSelected());
+            }
+            JOptionPane.showMessageDialog(this, "Producto guardado");
+            limpiarFormulario();
+            cargarProductos();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
-
-        limpiarFormulario();
-        cargarProductos();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed

@@ -9,16 +9,18 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class UsuariosPanel extends javax.swing.JPanel {
     private UsuarioTableModel tableModel;
     private Usuario usuarioSeleccionado;
     private UsuarioService usuarioService;
+    private UsuarioController controller;
 
 
 
     public UsuariosPanel() {
         
-        this.usuarioService = new UsuarioServiceStub();
+        this.controller = ApplicationContext.getInstance().getUsuarioController();
         
         initComponents();
         setupTable();
@@ -28,8 +30,15 @@ public class UsuariosPanel extends javax.swing.JPanel {
     }
     
     private void cargarUsuarios() {
-    List<Usuario> usuarios = usuarioService.listarTodos();
-    tableModel.setUsuarios(usuarios);
+        try {
+            List<Usuario> usuarios = controller.listarTodos();
+            tableModel.setUsuarios(usuarios);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Error al cargar usuarios: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
 }
 
    
@@ -77,10 +86,10 @@ public class UsuariosPanel extends javax.swing.JPanel {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { filtrar(); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { }
-            
             private void filtrar() {
                 String texto = txtBuscar.getText();
-                // TODO: Implementar filtro en próxima parte
+                List<Usuario> usuarios = controller.buscar(texto);
+                tableModel.setUsuarios(usuarios);
             }
         });
     }
@@ -233,32 +242,39 @@ public class UsuariosPanel extends javax.swing.JPanel {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        if (!validarFormulario()) {
-            return;
-        }
-
         String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword());
+        String password = new String(txtPassword.getPassword()).trim();
         String nombreCompleto = txtNombreCompleto.getText().trim();
         String rol = (String) cmbRol.getSelectedItem();
         boolean activo = chkActivo.isSelected();
-
-        if (usuarioSeleccionado == null) {
-            Usuario nuevo = new Usuario(0, username, password, nombreCompleto, rol, activo);
-            usuarioService.guardar(nuevo);
-            JOptionPane.showMessageDialog(this, "Usuario guardado exitosamente");
-        } else {
-            usuarioSeleccionado.setUsername(username);
-            usuarioSeleccionado.setPassword(password);
-            usuarioSeleccionado.setNombreCompleto(nombreCompleto);
-            usuarioSeleccionado.setRol(rol);
-            usuarioSeleccionado.setActivo(activo);
-            usuarioService.actualizar(usuarioSeleccionado);
-            JOptionPane.showMessageDialog(this, "Usuario actualizado exitosamente");
+        try {
+            if (usuarioSeleccionado == null) {
+                controller.crear(username, password, nombreCompleto, rol);
+                JOptionPane.showMessageDialog(this,
+                    "Usuario creado exitosamente",
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                controller.actualizar(usuarioSeleccionado.getId(), username, password,
+                                    nombreCompleto, rol, activo);
+                JOptionPane.showMessageDialog(this,
+                    "Usuario actualizado exitosamente",
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+            limpiarFormulario();
+            cargarUsuarios();
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Validación",
+                JOptionPane.WARNING_MESSAGE);
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
-
-        limpiarFormulario();
-        cargarUsuarios();         
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -282,20 +298,26 @@ public class UsuariosPanel extends javax.swing.JPanel {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-        if (usuarioSeleccionado == null) {
-            return;
-        }
-
+        if (usuarioSeleccionado == null) return;
         int respuesta = JOptionPane.showConfirmDialog(this,
-            "¿Estás seguro de eliminar el usuario '" + usuarioSeleccionado.getUsername() + "'?",
-            "Confirmar eliminación",
+            "¿Eliminar el usuario '" + usuarioSeleccionado.getUsername() + "'?",
+            "Confirmar",
             JOptionPane.YES_NO_OPTION);
-
         if (respuesta == JOptionPane.YES_OPTION) {
-            usuarioService.eliminar(usuarioSeleccionado.getId());
-            JOptionPane.showMessageDialog(this, "Usuario eliminado exitosamente");
-            limpiarFormulario();
-            cargarUsuarios();
+            try {
+                controller.eliminar(usuarioSeleccionado.getId());
+                JOptionPane.showMessageDialog(this,
+                    "Usuario eliminado",
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+                limpiarFormulario();
+                cargarUsuarios();
+            } catch (RuntimeException e) {
+                JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
     

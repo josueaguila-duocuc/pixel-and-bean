@@ -14,11 +14,12 @@ import javax.swing.table.AbstractTableModel;
 
 public class ReportesPanel extends javax.swing.JPanel {
     
-    private VentaService ventaService;
+    private VentaController controller;
     private ReporteTableModel tableModel;
    
     
     public ReportesPanel() {
+        this.controller = ApplicationContext.getInstance().getVentaController();
         ventaService = new VentaServiceStub();
         initComponents();
         setupComponents();
@@ -51,7 +52,7 @@ public class ReportesPanel extends javax.swing.JPanel {
             case "Este mes" -> fecha = LocalDate.now().minusDays(30);
         }
 
-        List<Venta> ventas = ventaService.listarPorFecha(fecha);
+        List<Venta> ventas = controller.listarPorFecha(fecha);
         tableModel.setVentas(ventas);
 
         double total = ventas.stream()

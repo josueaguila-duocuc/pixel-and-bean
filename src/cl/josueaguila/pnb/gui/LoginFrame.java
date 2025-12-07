@@ -14,11 +14,13 @@ import javax.swing.JOptionPane;
  * @author THINKBOOK
  */
 public class LoginFrame extends javax.swing.JFrame {
+    private LoginController controller;
 
     /**
      * Creates new form LoginFrame
      */
     public LoginFrame() {
+        this.controller = ApplicationContext.getInstance().getLoginController();
         initComponents();
         try {
             Image icon = ImageIO.read(getClass().getResource("/resources/icons/logo.png"));
@@ -42,9 +44,9 @@ public class LoginFrame extends javax.swing.JFrame {
 
         lblTittle = new javax.swing.JLabel();
         lblUser = new javax.swing.JLabel();
-        txtUser = new javax.swing.JTextField();
+        txtUsername = new javax.swing.JTextField();
         lblPassword = new javax.swing.JLabel();
-        txtPass = new javax.swing.JPasswordField();
+        txtPassword = new javax.swing.JPasswordField();
         btnLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -75,8 +77,8 @@ public class LoginFrame extends javax.swing.JFrame {
                     .addComponent(lblUser))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtPass, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                    .addComponent(txtUser))
+                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                    .addComponent(txtUsername))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(33, Short.MAX_VALUE)
@@ -96,11 +98,11 @@ public class LoginFrame extends javax.swing.JFrame {
                 .addGap(70, 70, 70)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblUser)
-                    .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPassword)
-                    .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnLogin)
                 .addContainerGap(58, Short.MAX_VALUE))
@@ -111,22 +113,30 @@ public class LoginFrame extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
-        String user = txtUser.getText();
-        String pass = new String(txtPass.getPassword());
-        
-        if (user.equals("admin") && pass.equals("1234")) {
-            // Login exitoso
-            MainFrame main = new MainFrame();
-            main.setVisible(true);
-            this.dispose(); // Cierra la ventana de login
-        } else {
-            // Login fallido
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
+        if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-            "Usuario o contraseña incorrectos",
-            "Error de autenticación",
-            JOptionPane.ERROR_MESSAGE);
+                "Por favor completa todos los campos",
+                "Validación",
+                JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        
+        try {
+            Usuario usuario = controller.autenticar(username, password);
+            JOptionPane.showMessageDialog(this,
+                "¡Bienvenido " + usuario.getNombreCompleto() + "!",
+                "Login exitoso",
+                JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            new MainFrame(usuario).setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Error de autenticación",
+                JOptionPane.ERROR_MESSAGE);
+            txtPassword.setText("");
+    }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
@@ -169,7 +179,7 @@ public class LoginFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblTittle;
     private javax.swing.JLabel lblUser;
-    private javax.swing.JPasswordField txtPass;
-    private javax.swing.JTextField txtUser;
+    private javax.swing.JPasswordField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

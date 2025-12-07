@@ -14,8 +14,10 @@ import java.awt.*;
  */
 public class MainFrame extends javax.swing.JFrame {
     private CardLayout cardLayout;
+    private Usuario usuarioActual;
 
-    public MainFrame() {
+    public MainFrame(Usuario usuario) {
+        this.usuarioActual = usuario;
         initComponents();
         setupNavigation();
         setLocationRelativeTo(null);
@@ -23,6 +25,12 @@ public class MainFrame extends javax.swing.JFrame {
         setSize(900, 600);
         setLocationRelativeTo(null);  // Centra la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        personalizarPorRol();
+    }
+    
+    private void personalizarPorRol() {
+        setTitle("Pixel & Bean - " + usuarioActual.getNombreCompleto() + 
+                " (" + usuarioActual.getRol() + ")");
     }
     
     private void setupNavigation() {

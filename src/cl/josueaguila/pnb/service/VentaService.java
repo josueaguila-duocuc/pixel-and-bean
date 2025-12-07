@@ -1,17 +1,92 @@
 package cl.josueaguila.pnb.service;
 
 import cl.josueaguila.pnb.model.Venta;
-import java.time.LocalDate;
+import cl.josueaguila.pnb.repository.IVentaRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 
-
-public interface VentaService {
-
-    List<Venta> listarTodas();
-    List<Venta> listarPorFecha(LocalDate fecha);
-    List<Venta> listarVentasDelDia();
-    Venta buscarPorId(int id);
-    Venta registrar(Venta venta);
-    void anular(int id);
-    double calcularTotalPorFecha(LocalDate fecha);
+/**
+ * Servicio de lógica de negocio para Venta
+ */
+public class VentaService {
+    
+    private final IVentaRepository repository;
+    
+    public VentaService(IVentaRepository repository) {
+        this.repository = repository;
+    }
+    
+    /**
+     * Registra una nueva venta
+     */
+    public int registrarVenta(int usuarioId, String usuarioNombre, double total) {
+        // Validaciones
+        if (usuarioId <= 0) {
+            throw new IllegalArgumentException("Usuario inválido");
+        }
+        if (total <= 0) {
+            throw new IllegalArgumentException("El total debe ser mayor a 0");
+        }
+        
+        // Crear venta
+        Venta venta = new Venta();
+        venta.setFechaHora(LocalDateTime.now());
+        venta.setUsuarioId(usuarioId);
+        venta.setUsuarioNombre(usuarioNombre);
+        venta.setTotal(total);
+        venta.setEstado("ACTIVA");
+        
+        return repository.guardar(venta);
+    }
+    
+    /**
+     * Anula una venta
+     */
+    public void anular(int id) {
+        Venta venta = repository.buscarPorId(id);
+        if (venta == null) {
+            throw new RuntimeException("Venta no encontrada");
+        }
+        
+        if ("ANULADA".equals(venta.getEstado())) {
+            throw new RuntimeException("La venta ya está anulada");
+        }
+        
+        repository.anular(id);
+    }
+    
+    /**
+     * Lista todas las ventas
+     */
+    public List<Venta> listarTodas() {
+        return repository.listarTodas();
+    }
+    
+    /**
+     * Lista ventas del día
+     */
+    public List<Venta> listarDelDia() {
+        return repository.listarDelDia();
+    }
+    
+    /**
+     * Lista ventas por rango de fechas
+     */
+    public List<Venta> listarPorRango(LocalDateTime desde, LocalDateTime hasta) {
+        return repository.listarPorRangoFechas(desde, hasta);
+    }
+    
+    /**
+     * Calcula total del día
+     */
+    public double calcularTotalDelDia() {
+        return repository.calcularTotalDelDia();
+    }
+    
+    /**
+     * Calcula total por rango
+     */
+    public double calcularTotalPorRango(LocalDateTime desde, LocalDateTime hasta) {
+        return repository.calcularTotalPorRango(desde, hasta);
+    }
 }

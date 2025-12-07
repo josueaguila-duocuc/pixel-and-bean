@@ -21,12 +21,14 @@ public class VentasPanel extends javax.swing.JPanel {
     private ProductoService productoService;
     private VentaService ventaService;
     private List<Producto> productosActivos;
-    
+    private VentaController controller;
+
 
 
 
     public VentasPanel() {
         
+        this.controller = ApplicationContext.getInstance().getVentaController();
         this.productoService = new ProductoServiceStub();
         this.ventaService = new VentaServiceStub();
         
@@ -34,6 +36,7 @@ public class VentasPanel extends javax.swing.JPanel {
         setupComponents();
         cargarProductos();
         cargarVentasDelDia();
+        cargarVentas();
     }
 
     private void setupComponents() {
@@ -56,6 +59,12 @@ public class VentasPanel extends javax.swing.JPanel {
         
         actualizarTotal();
     }
+    
+    private void cargarVentas() {
+        List<Venta> ventas = controller.listarTodos();
+        tableModel.setVentas(ventas);
+    }
+
     
 
     private void cargarProductos() {
@@ -263,29 +272,23 @@ public class VentasPanel extends javax.swing.JPanel {
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
-        int index = lstProductos.getSelectedIndex();
-        if (index < 0) {
-            JOptionPane.showMessageDialog(this, "Selecciona un producto de la lista.");
-            return;
+        try {
+            int productoId = Integer.parseInt(txtProductoId.getText());
+            int cantidad = Integer.parseInt(txtCantidad.getText());
+            String usuario = txtUsuario.getText();
+
+            controller.crearVenta(productoId, cantidad, usuario);
+
+            JOptionPane.showMessageDialog(this, "Venta registrada correctamente");
+            cargarVentas();
+            limpiarFormulario();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
         }
-
-        Producto seleccionado = listModel.getElementAt(index);
-        int cantidad = (int) spnCantidad.getValue();
-
-   
-        for (ItemVenta item : itemsVenta) {
-            if (item.getProducto().getId() == seleccionado.getId()) {
-                item.setCantidad(item.getCantidad() + cantidad);
-                detalleTableModel.fireTableDataChanged();
-                actualizarTotal();
-                return;
-            }
-        }
-
-
-        itemsVenta.add(new ItemVenta(seleccionado, cantidad));
-        detalleTableModel.fireTableDataChanged();
-        actualizarTotal();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarActionPerformed
@@ -334,14 +337,19 @@ public class VentasPanel extends javax.swing.JPanel {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
-        if (!itemsVenta.isEmpty()) {
-            int respuesta = JOptionPane.showConfirmDialog(this,
-                "¿Cancelar la venta actual?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION);
-            
-            if (respuesta == JOptionPane.YES_OPTION) {
-                limpiarVenta();
+        if (ventaSeleccionada == null) return;
+
+        int resp = JOptionPane.showConfirmDialog(this,
+            "¿Cancelar esta venta?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION);
+
+        if (resp == JOptionPane.YES_OPTION) {
+            try {
+                controller.cancelarVenta(ventaSeleccionada.getId());
+                cargarVentas();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
             }
         }
     }//GEN-LAST:event_btnCancelarActionPerformed
