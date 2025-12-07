@@ -1,28 +1,64 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package cl.josueaguila.pnb.gui;
 
-import javax.swing.JFrame;
+import cl.josueaguila.pnb.gui.EventosPanel;
+import cl.josueaguila.pnb.gui.ProductosPanel;
+import cl.josueaguila.pnb.gui.ReportesPanel;
+import cl.josueaguila.pnb.gui.UsuariosPanel;
+import cl.josueaguila.pnb.gui.VentasPanel;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  *
  * @author THINKBOOK
  */
 public class MainFrame extends javax.swing.JFrame {
+    private CardLayout cardLayout;
 
-    /**
-     * Creates new form MainFrame
-     */
     public MainFrame() {
         initComponents();
+        setupNavigation();
+        setLocationRelativeTo(null);
         setTitle("Pixel & Bean – Sistema de Gestión");
         setSize(900, 600);
         setLocationRelativeTo(null);  // Centra la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
+    
+    private void setupNavigation() {
+        // Inicializar CardLayout
+        cardLayout = new CardLayout();
+        contentPanel.setLayout(cardLayout);
+        
+        // Crear y agregar las vistas
+        contentPanel.add(createHomePanel(), "HOME");
+        contentPanel.add(new UsuariosPanel(), "USUARIOS");
+        contentPanel.add(new ProductosPanel(), "PRODUCTOS");
+        contentPanel.add(new VentasPanel(), "VENTAS");
+        contentPanel.add(new ReportesPanel(), "REPORTES");
+        contentPanel.add(new EventosPanel(), "EVENTOS");
+        
+        // Mostrar pantalla inicial
+        mostrarVista("HOME");
+    }
+    
+    private JPanel createHomePanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        JLabel label = new JLabel("<html><center>" +
+            "<h1>☕🎮 Pixel & Bean</h1>" +
+            "<p>Sistema de Gestión para Café-Arcade</p>" +
+            "<p style='margin-top: 20px;'>Selecciona una opción del menú superior para comenzar</p>" +
+            "</center></html>");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(label);
+        return panel;
+    }
+    
+    public void mostrarVista(String nombreVista) {
+        cardLayout.show(contentPanel, nombreVista);
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,22 +70,23 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         lblSession = new javax.swing.JLabel();
+        contentPanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         mnDoc = new javax.swing.JMenu();
-        mniSession = new javax.swing.JMenuItem();
-        mniExit = new javax.swing.JMenuItem();
+        menuCerrarSesion = new javax.swing.JMenuItem();
+        menuSalir = new javax.swing.JMenuItem();
         mnGest = new javax.swing.JMenu();
-        mniUser = new javax.swing.JMenuItem();
-        mniProduct = new javax.swing.JMenuItem();
+        menuUsuarios = new javax.swing.JMenuItem();
+        menuProductos = new javax.swing.JMenuItem();
         mnOp = new javax.swing.JMenu();
-        mniShop = new javax.swing.JMenuItem();
-        mnReport = new javax.swing.JMenu();
+        menuVentas = new javax.swing.JMenuItem();
+        menuVentasDelDia = new javax.swing.JMenu();
         mniVentasdia = new javax.swing.JMenuItem();
         mniTop = new javax.swing.JMenuItem();
         mnEvent = new javax.swing.JMenu();
-        mniTorneo = new javax.swing.JMenuItem();
+        menuTorneos = new javax.swing.JMenuItem();
         mnHelp = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        menuAcercaDe = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -74,54 +111,112 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
+        javax.swing.GroupLayout contentPanelLayout = new javax.swing.GroupLayout(contentPanel);
+        contentPanel.setLayout(contentPanelLayout);
+        contentPanelLayout.setHorizontalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        contentPanelLayout.setVerticalGroup(
+            contentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 178, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(contentPanel, java.awt.BorderLayout.CENTER);
+
         mnDoc.setText("Archivo");
 
-        mniSession.setText("Cerrar sesión");
-        mnDoc.add(mniSession);
+        menuCerrarSesion.setText("Cerrar sesión");
+        menuCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCerrarSesionActionPerformed(evt);
+            }
+        });
+        mnDoc.add(menuCerrarSesion);
 
-        mniExit.setText("Salir");
-        mnDoc.add(mniExit);
+        menuSalir.setText("Salir");
+        menuSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSalirActionPerformed(evt);
+            }
+        });
+        mnDoc.add(menuSalir);
 
         jMenuBar1.add(mnDoc);
 
         mnGest.setText("Gestión");
 
-        mniUser.setText("Usuarios");
-        mnGest.add(mniUser);
+        menuUsuarios.setText("Usuarios");
+        menuUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuUsuariosActionPerformed(evt);
+            }
+        });
+        mnGest.add(menuUsuarios);
 
-        mniProduct.setText("Productos");
-        mnGest.add(mniProduct);
+        menuProductos.setText("Productos");
+        menuProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuProductosActionPerformed(evt);
+            }
+        });
+        mnGest.add(menuProductos);
 
         jMenuBar1.add(mnGest);
 
         mnOp.setText("Operación");
 
-        mniShop.setText("Ventas");
-        mnOp.add(mniShop);
+        menuVentas.setText("Ventas");
+        menuVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuVentasActionPerformed(evt);
+            }
+        });
+        mnOp.add(menuVentas);
 
         jMenuBar1.add(mnOp);
 
-        mnReport.setText("Reportes");
+        menuVentasDelDia.setText("Reportes");
+        menuVentasDelDia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuVentasDelDiaActionPerformed(evt);
+            }
+        });
 
         mniVentasdia.setText("Ventas del día");
-        mnReport.add(mniVentasdia);
+        menuVentasDelDia.add(mniVentasdia);
 
         mniTop.setText("Top productos");
-        mnReport.add(mniTop);
+        mniTop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniTopActionPerformed(evt);
+            }
+        });
+        menuVentasDelDia.add(mniTop);
 
-        jMenuBar1.add(mnReport);
+        jMenuBar1.add(menuVentasDelDia);
 
         mnEvent.setText("Eventos");
 
-        mniTorneo.setText("Torneos");
-        mnEvent.add(mniTorneo);
+        menuTorneos.setText("Torneos");
+        menuTorneos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuTorneosActionPerformed(evt);
+            }
+        });
+        mnEvent.add(menuTorneos);
 
         jMenuBar1.add(mnEvent);
 
         mnHelp.setText("Ayuda");
 
-        jMenuItem1.setText("Acerca de…");
-        mnHelp.add(jMenuItem1);
+        menuAcercaDe.setText("Acerca de…");
+        menuAcercaDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAcercaDeActionPerformed(evt);
+            }
+        });
+        mnHelp.add(menuAcercaDe);
 
         jMenuBar1.add(mnHelp);
 
@@ -129,6 +224,86 @@ public class MainFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void menuCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCerrarSesionActionPerformed
+        // TODO add your handling code here:
+        int respuesta = JOptionPane.showConfirmDialog(this,
+            "¿Estás seguro de que deseas cerrar sesión?",
+            "Confirmar",
+            JOptionPane.YES_NO_OPTION);
+        
+        if (respuesta == JOptionPane.YES_OPTION) {
+            this.dispose();
+            // Aquí abriremos el Login nuevamente en clases futuras
+            new cl.josueaguila.pnb.gui.LoginFrame().setVisible(true);
+        }
+                
+    }//GEN-LAST:event_menuCerrarSesionActionPerformed
+
+    private void menuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSalirActionPerformed
+        // TODO add your handling code here:
+        int respuesta = JOptionPane.showConfirmDialog(this,
+            "¿Estás seguro de que deseas salir?",
+            "Confirmar salida",
+            JOptionPane.YES_NO_OPTION);
+        
+          
+        if (respuesta == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_menuSalirActionPerformed
+
+    private void menuAcercaDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAcercaDeActionPerformed
+        JOptionPane.showMessageDialog(this,
+            "<html><center>" +
+            "<h2>Pixel & Bean</h2>" +
+            "<p>Sistema de Gestión para Café-Arcade</p>" +
+            "<p>Versión 1.0.0</p>" +
+            "<p style='margin-top: 10px;'>Desarrollado por: Josue Aguila</p>" +
+            "<p>Asignatura: Programación Orientada a Objetos</p>" +
+            "<p>Año: 2025</p>" +
+            "</center></html>",
+            "Acerca de",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    }//GEN-LAST:event_menuAcercaDeActionPerformed
+    
+    private void menuTorneosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuTorneosActionPerformed
+        // TODO add your handling code here:
+        mostrarVista("EVENTOS"); 
+
+
+    }//GEN-LAST:event_menuTorneosActionPerformed
+
+    private void menuVentasDelDiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuVentasDelDiaActionPerformed
+        // TODO add your handling code here:
+        mostrarVista("REPORTES");
+    }//GEN-LAST:event_menuVentasDelDiaActionPerformed
+
+    private void menuVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuVentasActionPerformed
+        // TODO add your handling code here:
+        mostrarVista("VENTAS");
+    }//GEN-LAST:event_menuVentasActionPerformed
+
+    private void menuProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProductosActionPerformed
+        // TODO add your handling code here:
+        mostrarVista("PRODUCTOS");
+    }//GEN-LAST:event_menuProductosActionPerformed
+
+    private void menuUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuUsuariosActionPerformed
+        // TODO add your handling code here:
+        mostrarVista("USUARIOS");
+    }//GEN-LAST:event_menuUsuariosActionPerformed
+
+    private void mniTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniTopActionPerformed
+        // TODO add your handling code here:
+        // Por ahora, también mostrar REPORTES (o crear vista separada)
+        mostrarVista("REPORTES");
+        JOptionPane.showMessageDialog(this,
+            "El reporte Top Productos estará disponible en trabajo autónomo",
+            "En desarrollo",
+            JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_mniTopActionPerformed
 
     /**
      * @param args the command line arguments
@@ -166,23 +341,24 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contentPanel;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblSession;
+    private javax.swing.JMenuItem menuAcercaDe;
+    private javax.swing.JMenuItem menuCerrarSesion;
+    private javax.swing.JMenuItem menuProductos;
+    private javax.swing.JMenuItem menuSalir;
+    private javax.swing.JMenuItem menuTorneos;
+    private javax.swing.JMenuItem menuUsuarios;
+    private javax.swing.JMenuItem menuVentas;
+    private javax.swing.JMenu menuVentasDelDia;
     private javax.swing.JMenu mnDoc;
     private javax.swing.JMenu mnEvent;
     private javax.swing.JMenu mnGest;
     private javax.swing.JMenu mnHelp;
     private javax.swing.JMenu mnOp;
-    private javax.swing.JMenu mnReport;
-    private javax.swing.JMenuItem mniExit;
-    private javax.swing.JMenuItem mniProduct;
-    private javax.swing.JMenuItem mniSession;
-    private javax.swing.JMenuItem mniShop;
     private javax.swing.JMenuItem mniTop;
-    private javax.swing.JMenuItem mniTorneo;
-    private javax.swing.JMenuItem mniUser;
     private javax.swing.JMenuItem mniVentasdia;
     // End of variables declaration//GEN-END:variables
-}
+ }
