@@ -2,69 +2,61 @@ package cl.josueaguila.pnb.repository;
 
 import cl.josueaguila.pnb.model.Usuario;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * Contrato de operaciones para acceso a datos de Usuario
- */
 public interface IUsuarioRepository {
     
     /**
-     * Busca un usuario por su ID
-     * @param id ID del usuario
-     * @return Usuario encontrado o null
+     * Busca un usuario por su username.
+     * @return Optional con el usuario, o vacío si no existe
      */
-    Usuario buscarPorId(int id);
+    Optional<Usuario> buscarPorUsername(String username);
     
     /**
-     * Busca un usuario por su username
-     * @param username Username a buscar
-     * @return Usuario encontrado o null
+     * Autentica un usuario por username y password.
+     * @return Optional con el usuario si las credenciales son válidas
      */
-    Usuario buscarPorUsername(String username);
+    Optional<Usuario> autenticar(String username, String password);
     
     /**
-     * Lista todos los usuarios
-     * @return Lista de todos los usuarios
+     * Lista todos los usuarios activos.
+     */
+    List<Usuario> listarActivos();
+    
+    /**
+     * Lista todos los usuarios (activos e inactivos).
      */
     List<Usuario> listarTodos();
     
     /**
-     * Lista usuarios por rol
-     * @param rol Rol a filtrar (ADMIN, OPERADOR)
-     * @return Lista de usuarios con ese rol
+     * Busca un usuario por ID.
      */
-    List<Usuario> listarPorRol(String rol);
+    Optional<Usuario> buscarPorId(int id);
     
     /**
-     * Guarda un nuevo usuario
-     * @param usuario Usuario a guardar
-     * @return ID generado
+     * Crea un nuevo usuario.
+     * @return El usuario creado con su ID asignado
      */
-    int guardar(Usuario usuario);
+    Usuario crear(Usuario usuario);
     
     /**
-     * Actualiza un usuario existente
-     * @param usuario Usuario con datos actualizados
+     * Actualiza un usuario existente.
      */
     void actualizar(Usuario usuario);
     
     /**
-     * Elimina un usuario por ID
-     * @param id ID del usuario a eliminar
+     * Elimina un usuario (físicamente).
      */
     void eliminar(int id);
     
     /**
-     * Verifica si existe un username
-     * @param username Username a verificar
-     * @return true si existe, false si no
+     * Desactiva un usuario (baja lógica).
      */
-    boolean existeUsername(String username);
+    void desactivar(int id);
     
     /**
-     * Cuenta usuarios activos por rol
-     * @param rol Rol a contar
-     * @return Cantidad de usuarios activos con ese rol
+     * Activa un usuario previamente desactivado.
      */
-    int contarActivosPorRol(String rol);
+    void activar(int id);
 }
+

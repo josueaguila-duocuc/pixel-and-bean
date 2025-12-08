@@ -8,6 +8,9 @@ import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import cl.josueaguila.pnb.app.*;
+import cl.josueaguila.pnb.controller.*;
+import cl.josueaguila.pnb.model.Usuario;
 
 /**
  *

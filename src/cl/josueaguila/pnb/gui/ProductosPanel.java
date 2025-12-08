@@ -4,11 +4,12 @@ import javax.swing.JOptionPane;
 import cl.josueaguila.pnb.service.ProductoService;
 import cl.josueaguila.pnb.service.impl.ProductoServiceStub;
 import cl.josueaguila.pnb.model.Producto;
+import cl.josueaguila.pnb.controller.*;
+import cl.josueaguila.pnb.app.*;
 
 public class ProductosPanel extends javax.swing.JPanel {
     private java.util.List<Producto> productos = new java.util.ArrayList<>();
     private ProductoTableModel modelo;
-    private ProductoService productoService;
     private Producto productoSeleccionado; 
     private ProductoController controller;
     
@@ -30,8 +31,8 @@ public class ProductosPanel extends javax.swing.JPanel {
 
 
     private void cargarProductos() {
-        List<Producto> productos = controller.listarTodos();
-        tableModel.setProductos(productos);
+        productos = controller.listarTodos();
+        modelo.setProductos(productos);
     }
 
 
@@ -284,7 +285,7 @@ public class ProductosPanel extends javax.swing.JPanel {
                 "Confirmar", JOptionPane.YES_NO_OPTION);
 
         if (r == JOptionPane.YES_OPTION) {
-            productoService.eliminar(productoSeleccionado.getId());
+            controller.eliminar(productoSeleccionado.getId());
             JOptionPane.showMessageDialog(this, "Producto eliminado");
             limpiarFormulario();
             cargarProductos();

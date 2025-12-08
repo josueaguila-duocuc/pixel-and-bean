@@ -5,6 +5,7 @@ import cl.josueaguila.pnb.gui.ProductosPanel;
 import cl.josueaguila.pnb.gui.ReportesPanel;
 import cl.josueaguila.pnb.gui.UsuariosPanel;
 import cl.josueaguila.pnb.gui.VentasPanel;
+import cl.josueaguila.pnb.model.Usuario;
 import javax.swing.*;
 import java.awt.*;
 
@@ -26,6 +27,10 @@ public class MainFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);  // Centra la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         personalizarPorRol();
+    }
+
+    private MainFrame() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
     private void personalizarPorRol() {

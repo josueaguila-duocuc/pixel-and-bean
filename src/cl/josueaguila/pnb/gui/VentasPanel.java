@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import cl.josueaguila.pnb.controller.*;
+import cl.josueaguila.pnb.app.*;
 
 
 
@@ -22,6 +24,7 @@ public class VentasPanel extends javax.swing.JPanel {
     private VentaService ventaService;
     private List<Producto> productosActivos;
     private VentaController controller;
+    private Venta ventaSeleccionada;
 
 
 
@@ -29,8 +32,8 @@ public class VentasPanel extends javax.swing.JPanel {
     public VentasPanel() {
         
         this.controller = ApplicationContext.getInstance().getVentaController();
-        this.productoService = new ProductoServiceStub();
-        this.ventaService = new VentaServiceStub();
+        this.productoService = ApplicationContext.getInstance().getProductoService();
+        this.controller = ApplicationContext.getInstance().getVentaController();
         
         initComponents();
         setupComponents();
@@ -62,7 +65,7 @@ public class VentasPanel extends javax.swing.JPanel {
     
     private void cargarVentas() {
         List<Venta> ventas = controller.listarTodos();
-        tableModel.setVentas(ventas);
+        ventasTableModel.setVentas(ventas);
     }
 
     
@@ -271,24 +274,20 @@ public class VentasPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
-        try {
-            int productoId = Integer.parseInt(txtProductoId.getText());
-            int cantidad = Integer.parseInt(txtCantidad.getText());
-            String usuario = txtUsuario.getText();
+            Producto producto = lstProductos.getSelectedValue();
 
-            controller.crearVenta(productoId, cantidad, usuario);
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona un producto", 
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }   
 
-            JOptionPane.showMessageDialog(this, "Venta registrada correctamente");
-            cargarVentas();
-            limpiarFormulario();
+        int cantidad = (int) spnCantidad.getValue();
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-        }
+        ItemVenta item = new ItemVenta(producto, cantidad);
+        itemsVenta.add(item);
+        detalleTableModel.fireTableDataChanged();
+        actualizarTotal();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarActionPerformed

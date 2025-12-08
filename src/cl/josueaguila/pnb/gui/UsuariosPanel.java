@@ -8,6 +8,8 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import cl.josueaguila.pnb.controller.*;
+import cl.josueaguila.pnb.app.*;
 
 
 public class UsuariosPanel extends javax.swing.JPanel {

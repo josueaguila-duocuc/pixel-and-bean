@@ -3,12 +3,15 @@ package cl.josueaguila.pnb.gui;
 import cl.josueaguila.pnb.model.Venta;
 import cl.josueaguila.pnb.service.VentaService;
 import cl.josueaguila.pnb.service.impl.VentaServiceStub;
+import cl.josueaguila.pnb.controller.*;
+import cl.josueaguila.pnb.app.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
+
 
 
 
@@ -20,7 +23,6 @@ public class ReportesPanel extends javax.swing.JPanel {
     
     public ReportesPanel() {
         this.controller = ApplicationContext.getInstance().getVentaController();
-        ventaService = new VentaServiceStub();
         initComponents();
         setupComponents();
     }
@@ -39,6 +41,7 @@ public class ReportesPanel extends javax.swing.JPanel {
 
         cargarReportePorFecha();
 }
+    
     
     private void cargarReportePorFecha() {
         LocalDate fecha = LocalDate.now();

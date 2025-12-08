@@ -2,6 +2,7 @@ package cl.josueaguila.pnb.service;
 
 import cl.josueaguila.pnb.model.Venta;
 import cl.josueaguila.pnb.repository.IVentaRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -88,5 +89,17 @@ public class VentaService {
      */
     public double calcularTotalPorRango(LocalDateTime desde, LocalDateTime hasta) {
         return repository.calcularTotalPorRango(desde, hasta);
+    }
+
+    public List<Venta> listarPorFecha(LocalDate fecha) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public List<Venta> listarVentasDelDia() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void registrar(Venta nueva) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

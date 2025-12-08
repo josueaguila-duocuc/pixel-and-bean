@@ -17,15 +17,15 @@ public class Venta {
     }
     
     // Constructor completo
-    public Venta(int id, LocalDateTime fechaHora, int usuarioId, String usuarioNombre,
-                 double total, String estado) {
-        this.id = id;
-        this.fechaHora = fechaHora;
-        this.usuarioId = usuarioId;
-        this.usuarioNombre = usuarioNombre;
-        this.total = total;
-        this.estado = estado;
-    }
+
+    public Venta(int id, LocalDateTime fechaHora, int usuarioId, String usuarioNombre, double total, String estado) {
+    this.id = id;
+    this.fechaHora = fechaHora;
+    this.usuarioId = usuarioId;
+    this.usuarioNombre = usuarioNombre;
+    this.total = total;
+    this.estado = estado;
+}
     
     // Getters y Setters
     public LocalDateTime getFecha() {
